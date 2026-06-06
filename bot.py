@@ -8,6 +8,9 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 
+from flask import Flask
+from threading import Thread
+
 load_dotenv()
 
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -350,5 +353,18 @@ async def panel(interaction: discord.Interaction):
 
 if TOKEN is None:
     raise RuntimeError(".env に DISCORD_TOKEN を設定してください")
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "募集ちゃん起動中"
+
+def run_web():
+    app.run(host="0.0.0.0", port=10000)
+
+Thread(target=run_web).start()
+
+bot.run(TOKEN)
 
 bot.run(TOKEN)
